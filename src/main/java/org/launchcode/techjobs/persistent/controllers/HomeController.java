@@ -21,15 +21,12 @@ import java.util.Optional;
  */
 @Controller
 public class HomeController {
-
     @Autowired
-    EmployerRepository employerRepository;
-
+    public EmployerRepository employerRepository;
     @Autowired
-    JobRepository jobRepository;
-
+    public JobRepository jobRepository;
     @Autowired
-    SkillRepository skillRepository;
+    public SkillRepository skillRepository;
 
     @RequestMapping("")
     public String index(Model model) {
@@ -43,15 +40,17 @@ public class HomeController {
     @GetMapping("add")
     public String displayAddJobForm(Model model) {
         model.addAttribute("title", "Add Job");
+        model.addAttribute(new Job());
         model.addAttribute("employers", employerRepository.findAll());
         model.addAttribute("skills", skillRepository.findAll());
-        model.addAttribute(new Job());
         return "add";
     }
 
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                    Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
+                                    Errors errors, Model model, @RequestParam int employerId,
+                                    @RequestParam List<Integer> skills) {
+
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Job");
             return "add";
@@ -62,14 +61,22 @@ public class HomeController {
         newJob.setSkills(skillObjs);
         jobRepository.save(newJob);
         model.addAttribute("job", jobRepository.findAll());
+
         return "redirect:";
-
-
     }
 
     @GetMapping("view/{jobId}")
     public String displayViewJob(Model model, @PathVariable int jobId) {
-        return "view";
+
+        Optional<Job> optionalJob = jobRepository.findById(jobId);
+        if(optionalJob.isPresent()){
+            Job job = optionalJob.get();
+            model.addAttribute("job", job);
+            return "view";
+        }else{
+            return "redirect:";
+        }
+
     }
 
 

@@ -21,13 +21,11 @@ import java.util.HashMap;
 public class ListController {
 
     @Autowired
-    private JobRepository jobRepository;
-
+    public EmployerRepository employerRepository;
     @Autowired
-    private EmployerRepository employerRepository;
-
+    public JobRepository jobRepository;
     @Autowired
-    private SkillRepository skillRepository;
+    public SkillRepository skillRepository;
 
     static HashMap<String, String> columnChoices = new HashMap<>();
 
